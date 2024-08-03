@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import es.cic.curso.practica004.exception.PeliculaNotFoundException;
 import es.cic.curso.practica004.model.Pelicula;
 import es.cic.curso.practica004.service.PeliculaService;
 
@@ -70,14 +71,18 @@ public class PeliculaController {
      * Si la película existe devuelve la película con un estado HTTP
      * 200 (ok)
      * Si la plícula no existe, devuelve un estado HTTP 404 (Not Found)
+     * Después de crear la clase exception lo cambiamos y metemos bloque
+     * try catch para intentar ejecutar el código que podría lanzar una excepción
+     * ResponseEntity<>(): Los corchetes angulares vacíos <> se utilizan 
+     * para especificar el tipo genérico al crear una instancia de ResponseEntity
      */
     @GetMapping("/{id}")
     public ResponseEntity<Pelicula> getPeliculaById(@PathVariable Long id) {
-        Optional<Pelicula> pelicula = peliculaService.findById(id);
-        if (pelicula.isPresent()) {
-            return ResponseEntity.ok(pelicula.get());
-        } else {
-            return ResponseEntity.notFound().build();
+        try {
+            Pelicula pelicula = peliculaService.findById(id);
+            return ResponseEntity.ok(pelicula);
+        } catch (PeliculaNotFoundException ex) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -109,23 +114,24 @@ public class PeliculaController {
      * Si la película existe, actualiza los detalles y devuelve la 
      * película actualizada con un estado HTTP 200 (OK).
      * Si la película no existe, devuelve un estado HTTP 404 (Not Found).
+     * Modificamos el código metiendo un try catch para el manejo de excepciones
      */
     @PutMapping ("/{id}")
     public ResponseEntity<Pelicula> updatePelicula(@PathVariable Long id, @RequestBody Pelicula peliculaDetails) {
-        Optional <Pelicula> optionalPelicula = peliculaService.findById(id);
-        if (optionalPelicula.isPresent()) {
-            Pelicula existingPelicula = optionalPelicula.get();
-            existingPelicula.setTitulo(peliculaDetails.getTitulo());
-            existingPelicula.setDirector(peliculaDetails.getDirector());
-            existingPelicula.setAno(peliculaDetails.getAno());
-            existingPelicula.setGenero(peliculaDetails.getGenero());
-            existingPelicula.setDisponible(peliculaDetails.isDisponible());
-            Pelicula updatePelicula = peliculaService.save (existingPelicula);
-            return ResponseEntity.ok (updatePelicula);
-        } else {
-            return ResponseEntity.notFound().build();
+        try {
+            Pelicula pelicula = peliculaService.findById(id);
+            pelicula.setTitulo(peliculaDetails.getTitulo());
+            pelicula.setDirector(peliculaDetails.getDirector());
+            pelicula.setAno(peliculaDetails.getAno());
+            pelicula.setGenero(peliculaDetails.getGenero());
+            pelicula.setDisponible(peliculaDetails.isDisponible());
+            Pelicula updatedPelicula = peliculaService.save(pelicula);
+            return ResponseEntity.ok(updatedPelicula);
+        } catch (PeliculaNotFoundException ex) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
 
     /*
      * ELIMINAR UNA PELICULA POR ID
@@ -141,11 +147,11 @@ public class PeliculaController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePelicula(@PathVariable Long id) {
-        if (peliculaService.findById(id).isPresent()) {
+        try {
             peliculaService.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (PeliculaNotFoundException ex) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         
     }

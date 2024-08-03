@@ -1,11 +1,12 @@
 package es.cic.curso.practica004.service;
 
 import java.util.List;
-import java.util.Optional;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import es.cic.curso.practica004.exception.PeliculaNotFoundException;
 import es.cic.curso.practica004.model.Pelicula;
 import es.cic.curso.practica004.repository.PeliculaRepository;
 
@@ -27,11 +28,18 @@ public class PeliculaService {
         return peliculaRepository.findAll();
     }
 
-    /*Método para obtener una película por su id, utilizamos 
-    Optional porque el resultado puede no existir*/
-    public Optional <Pelicula> findById(Long id) {
-        return peliculaRepository.findById(id);
+     /*Método para obtener una película por su id, utilizamos 
+     * Optional porque el resultado puede no existir
+     * Metemos .orElseThrow para meter la excepción si el Optional está vacío
+     * después de crear la clase exception
+     * peliculaRepository.findById(id): Esto devuelve un Optional<Pelicula>,
+     * por eso ahora hemos quitado el Optional
+     */
+    public Pelicula findById(Long id) {
+        return peliculaRepository.findById(id)
+        .orElseThrow (() -> new PeliculaNotFoundException("Pelicula no encontrada con id" + id));
     }
+    
 
     //Método para guardar una nueva o actualizar una película
     public Pelicula save (Pelicula pelicula) {
@@ -41,8 +49,12 @@ public class PeliculaService {
     /*Método para eliminar una película por su id
       Utilizamos void para métodos que realizan una acción 
       pero no necesitan devolver un valor. Ideal para 
-      operaciones de eliminación que no requieren un resultado*/
+      operaciones de eliminación que no requieren un resultado
+      Después de crear la clase de excepciones las metemos en el método*/
     public void deleteById(Long id) {
+        if (!peliculaRepository.existsById(id)) {
+            throw new PeliculaNotFoundException("Pelicula no encontrada con id" + id);
+        }
         peliculaRepository.deleteById(id);
     }
 
