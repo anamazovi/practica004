@@ -5,7 +5,6 @@ package es.cic.curso.practica004.controller;
  */
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,7 +32,7 @@ import es.cic.curso.practica004.service.PeliculaService;
  * /peliculas.
  */
 @RestController
-@RequestMapping ("api/peliculas")
+@RequestMapping ("/api/peliculas")
 public class PeliculaController {
 
     /*
