@@ -33,7 +33,7 @@ public class PeliculaService {
      * Metemos .orElseThrow para meter la excepción si el Optional está vacío
      * después de crear la clase exception
      * peliculaRepository.findById(id): Esto devuelve un Optional<Pelicula>,
-     * por eso ahora hemos quitado el Optional
+     * Generamos las excepciones, por eso ahora hemos quitado el Optional
      */
     public Pelicula findById(Long id) {
         return peliculaRepository.findById(id)

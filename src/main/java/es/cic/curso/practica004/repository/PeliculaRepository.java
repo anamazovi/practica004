@@ -13,7 +13,7 @@ Anotaciones: No necesita anotaciones adicionales, ya que
 hereda el comportamiento de JpaRepository.*/
 
 
-/*/ El repositorio extiende JpaRepository, lo que le proporciona 
+/*El repositorio extiende JpaRepository, lo que le proporciona 
 métodos CRUD básicos automáticamente. */
 public interface PeliculaRepository extends JpaRepository <Pelicula, Long>{
 }

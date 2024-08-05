@@ -1,8 +1,4 @@
 package es.cic.curso.practica004.controller;
-/*
- * Esta clase es un controlador REST en Spring Boot que maneja
- * las solicitudes HTTP relacionadas con la entidad Pelicula.
- */
 
 import java.util.List;
 
